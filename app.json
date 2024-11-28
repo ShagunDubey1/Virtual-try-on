@@ -40,8 +40,22 @@
         }
       ],
       "expo-asset",
-      "react-native-vision-camera",
-      "expo-build-properties"
+      [
+        "react-native-vision-camera",
+        {
+          "enableMicrophonePermission": true,
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
+          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
