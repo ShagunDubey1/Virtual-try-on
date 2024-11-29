@@ -46,7 +46,11 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.2",
     "react-native-worklets-core": "^1.5.0",
-    "expo-dev-client": "~5.0.4"
+    "expo-dev-client": "~5.0.4",
+    "expo-sharing": "~13.0.0",
+    "expo-image-manipulator": "~13.0.5",
+    "react-native-view-shot": "4.0.2",
+    "expo-media-library": "~17.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

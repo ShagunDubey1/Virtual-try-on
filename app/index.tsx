@@ -27,6 +27,9 @@ import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import { useIsFocused } from '@react-navigation/native';
 import { Redirect, router } from 'expo-router';
+import * as Sharing from 'expo-sharing';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { captureRef } from 'react-native-view-shot';
 
 const HomeScreen = () => {
   return (
@@ -41,6 +44,8 @@ function FaceDetection(): JSX.Element {
   const isFocused = useIsFocused();
   const { hasPermission } = useCameraPermission();
   const [cameraMounted, setCameraMounted] = useState<boolean>(false);
+
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
 
   const [selectedNecklace, setSelectedNecklace] = useState<any>(
     require("../assets/images/neck2.png")
@@ -104,6 +109,9 @@ function FaceDetection(): JSX.Element {
   const cameraDevice = useCameraDevice("front");
   const camera = useRef<VisionCamera>(null);
 
+  // Ref for capturing the entire view
+  const viewRef = useRef<View>(null);
+
   const handleFacesDetected = (faces: Face[]) => {
     if (faces.length > 0) {
       const face = faces[0];
@@ -132,7 +140,114 @@ function FaceDetection(): JSX.Element {
     setSelectedNecklace(url);
   };
 
+    // Photo capture function
+  const capturePhoto = async () => {
+    try {
+      if (camera.current && viewRef.current) {
+        // First, capture the camera photo
+        const photo = await camera.current.takePhoto({
+          flash: 'off'
+        });
+
+        // Capture the view with necklace overlay
+        const capturedViewUri = await captureRef(viewRef, {
+          format: 'jpg',
+          quality: 1.0,
+        });
+
+        // Combine the camera photo with the necklace overlay
+        const combinedImage = await combineImages(photo.path, capturedViewUri);
+
+        // Save the combined photo
+        setCapturedPhoto(combinedImage);
+      }
+    } catch (error) {
+      console.error("Failed to capture photo:", error);
+    }
+  };
+
+  // Combine camera photo with necklace overlay
+  const combineImages = async (backgroundPath: string, overlayPath: string): Promise<string> => {
+    try {
+      const manipulatedImage = await (ImageManipulator as any).manipulateAsync(
+        backgroundPath,
+        [
+          {
+            overlay: {
+              uri: overlayPath,
+              x: necklacePosition.x,
+              y: necklacePosition.y,
+              width: necklaceSize.width,
+              height: necklaceSize.height,
+            }
+          }
+        ],
+        { 
+          compress: 1, 
+          format: ImageManipulator.SaveFormat.JPEG 
+        }
+      );
+
+      return manipulatedImage.uri;
+    } catch (error) {
+      console.error("Failed to combine images:", error);
+      throw error;
+    }
+  };
+
+   // Share photo function
+  const sharePhoto = async () => {
+    if (capturedPhoto) {
+      try {
+        // Check if sharing is available
+        const isAvailable = await Sharing.isAvailableAsync();
+        
+        if (isAvailable) {
+          await Sharing.shareAsync(capturedPhoto, {
+            dialogTitle: 'Share your virtual jewelry try-on',
+            mimeType: 'image/jpeg'
+          });
+        } else {
+          console.log('Sharing is not available');
+        }
+      } catch (error) {
+        console.error("Failed to share photo:", error);
+      }
+    }
+  };
+
+  // Reset captured photo
+  const resetCapture = () => {
+    setCapturedPhoto(null);
+  };
+
   if (!hasPermission) return <Redirect href={"/permissions"} />;
+
+    // Render captured photo if available
+  if (capturedPhoto) {
+    return (
+      <View style={styles.container}>
+        <Image 
+          source={{ uri: `file://${capturedPhoto}` }} 
+          style={styles.capturedImage} 
+        />
+        <View style={styles.captureControls}>
+          <TouchableOpacity 
+            style={styles.controlButton} 
+            onPress={sharePhoto}
+          >
+            <Text style={styles.buttonText}>Share Photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.controlButton} 
+            onPress={resetCapture}
+          >
+            <Text style={styles.buttonText}>Retake</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -148,6 +263,7 @@ function FaceDetection(): JSX.Element {
             style={StyleSheet.absoluteFill}
             isActive={cameraMounted}
             device={cameraDevice}
+            photo={true}
             onError={(error) => console.error("Camera error:", error)}
             faceDetectionCallback={handleFacesDetected}
             faceDetectionOptions={faceDetectionOptions}
@@ -236,6 +352,14 @@ function FaceDetection(): JSX.Element {
             </Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity
+            style={styles.captureBtn}
+            onPress={capturePhoto}
+          >
+            <Text style={{ color: "white", fontSize: 14, fontWeight: "700" }}>
+              Capture Photo
+            </Text>
+          </TouchableOpacity>
       </View>
     </View>
   );
@@ -296,7 +420,36 @@ const styles = StyleSheet.create({
     backgroundColor: "#588157",
     padding: 14,
     borderRadius: 8,
-  }
+  },
+    capturedImage: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    captureControls: {
+      position: 'absolute',
+      bottom: 50,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 20,
+    },
+    controlButton: {
+      backgroundColor: '#588157',
+      padding: 15,
+      borderRadius: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontWeight: '700',
+    },
+    captureBtn: {
+      backgroundColor: '#588157',
+      padding: 14,
+      borderRadius: 8,
+      marginLeft: 10,
+    }
 });
 
 export default HomeScreen;
