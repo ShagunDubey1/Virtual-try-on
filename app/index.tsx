@@ -28,7 +28,6 @@ import { Asset } from 'expo-asset';
 import { useIsFocused } from '@react-navigation/native';
 import { Redirect, router } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import * as ImageManipulator from 'expo-image-manipulator';
 import { captureRef } from 'react-native-view-shot';
 
 const HomeScreen = () => {
@@ -140,60 +139,78 @@ function FaceDetection(): JSX.Element {
     setSelectedNecklace(url);
   };
 
-    // Photo capture function
   const capturePhoto = async () => {
-    try {
-      if (camera.current && viewRef.current) {
-        // First, capture the camera photo
-        const photo = await camera.current.takePhoto({
-          flash: 'off'
-        });
+  try {
+    if (camera.current && viewRef.current) {
+      // Capture the camera photo
+      const photo = await camera.current.takePhoto({
+        flash: 'off',
+      });
 
-        // Capture the view with necklace overlay
-        const capturedViewUri = await captureRef(viewRef, {
-          format: 'jpg',
-          quality: 1.0,
-        });
+      // Capture the view with the necklace overlay
+      const capturedViewUri = await captureRef(viewRef, {
+        format: 'jpg',
+        quality: 1.0,
+      });
 
-        // Combine the camera photo with the necklace overlay
-        const combinedImage = await combineImages(photo.path, capturedViewUri);
+      // Combine the camera photo and the necklace overlay
+      const combinedImage = await combineImages(photo.path, capturedViewUri);
 
-        // Save the combined photo
-        setCapturedPhoto(combinedImage);
-      }
-    } catch (error) {
-      console.error("Failed to capture photo:", error);
+      // Save or set the combined image
+      setCapturedPhoto(combinedImage);
     }
-  };
+  } catch (error) {
+    console.error("Failed to capture photo:", error);
+  }
+};
 
-  // Combine camera photo with necklace overlay
-  const combineImages = async (backgroundPath: string, overlayPath: string): Promise<string> => {
-    try {
-      const manipulatedImage = await (ImageManipulator as any).manipulateAsync(
-        backgroundPath,
-        [
-          {
-            overlay: {
-              uri: overlayPath,
-              x: necklacePosition.x,
-              y: necklacePosition.y,
-              width: necklaceSize.width,
-              height: necklaceSize.height,
-            }
-          }
-        ],
-        { 
-          compress: 1, 
-          format: ImageManipulator.SaveFormat.JPEG 
-        }
-      );
+// Combine images logic
+const combineImages = async (photoPath, overlayUri) => {
+  try {
+    // Read the files using expo-file-system
+    const photoData = await FileSystem.readAsStringAsync(photoPath, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    const overlayData = await FileSystem.readAsStringAsync(overlayUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
 
-      return manipulatedImage.uri;
-    } catch (error) {
-      console.error("Failed to combine images:", error);
-      throw error;
-    }
-  };
+    // Convert base64 strings into Skia data using Skia.Data.MakeFromBase64
+    const photoSkData = Skia.Data.fromBase64(photoData);
+    const overlaySkData = Skia.Data.fromBase64(overlayData);
+
+    // Convert SkData to Skia images
+    const photoImage = Skia.Image.MakeImageFromEncoded(photoSkData);
+    const overlayImage = Skia.Image.MakeImageFromEncoded(overlaySkData);
+
+    // Return the final combined image as JSX
+    return (
+      <Canvas style={{ width: photoImage?.width(), height: photoImage?.height() }}>
+        {/* Draw the camera photo */}
+        <SkiaImage image={photoImage} x={0} y={0} width={4}  height={4}/>
+        
+        {/* Overlay the necklace on top */}
+        <SkiaImage image={overlayImage} x={0} y={0} />
+      </Canvas>
+    );
+  } catch (error) {
+    console.error('Error combining images:', error);
+  }
+};
+
+// Utility to save canvas to an image file (for example using react-native-view-shot)
+const canvasToUri = async (canvas) => {
+  try {
+    const uri = await captureRef(canvas, {
+      format: 'jpg',
+      quality: 1.0,
+    });
+    return uri;
+  } catch (error) {
+    console.error('Error capturing canvas:', error);
+  }
+};
+
 
    // Share photo function
   const sharePhoto = async () => {
@@ -250,6 +267,11 @@ function FaceDetection(): JSX.Element {
   }
 
   return (
+    <View 
+      ref={viewRef} 
+      collapsable={false} 
+      style={styles.container}
+    >
     <View style={styles.container}>
       <Text style={styles.heading}>
         Face a light source, align your face, and tuck your hair behind your
@@ -361,6 +383,8 @@ function FaceDetection(): JSX.Element {
             </Text>
           </TouchableOpacity>
       </View>
+    </View>
+
     </View>
   );
 }
