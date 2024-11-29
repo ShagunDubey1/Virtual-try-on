@@ -168,6 +168,8 @@ function FaceDetection(): JSX.Element {
         <Text>No camera device or permission</Text>
       )}
 
+      <TouchableOpacity style={styles.earBtn}><Text style={{color: "white"}}>Earrings {"->"}</Text></TouchableOpacity>
+
       {/* Image selector to choose different necklaces */}
       <View style={styles.imageSelector}>
         <TouchableOpacity
@@ -238,10 +240,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  earBtn:{
+    position: 'absolute',
+    zIndex: 20,
+    bottom: 110,
+    right: 20,
+  },
   heading: {
     position: 'absolute',
     zIndex: 20,
-    top: 15,
+    top: 45,
     color: "white",
     textAlign: 'center',
     width: '100%',

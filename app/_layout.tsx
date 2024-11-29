@@ -35,6 +35,10 @@ export default function RootLayout() {
             name="permissions"
             options={{ presentation: "modal", headerShown: true }}
           />
+        <Stack.Screen
+          name="earrings"
+          options={{ presentation: "modal", headerShown: true }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
