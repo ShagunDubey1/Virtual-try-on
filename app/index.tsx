@@ -26,7 +26,7 @@ import { Canvas, Image as SkiaImage, Skia, SkImage } from '@shopify/react-native
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import { useIsFocused } from '@react-navigation/native';
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 
 const HomeScreen = () => {
   return (
@@ -168,7 +168,12 @@ function FaceDetection(): JSX.Element {
         <Text>No camera device or permission</Text>
       )}
 
-      <TouchableOpacity style={styles.earBtn}><Text style={{color: "white"}}>Earrings {"->"}</Text></TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => router.push("/earrings")} 
+        style={styles.earBtn}
+      >
+        <Text style={{color: "white"}}>Earrings {"->"}</Text>
+      </TouchableOpacity>
 
       {/* Image selector to choose different necklaces */}
       <View style={styles.imageSelector}>
