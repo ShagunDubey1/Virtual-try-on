@@ -1,50 +1,69 @@
-# Welcome to your Expo app 👋
+<h1 align="center" id="title">Virtual Trial</h1>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center"><img src="https://socialify.git.ci/ShagunDubey1/Virtual-try-on/image?description=1&amp;descriptionEditable=%E2%9C%A8%20Try%20on%20stunning%20jewelry%20virtually%20with%20ease%20%E2%80%93%20necklaces%20and%20earrings%2C%20all%20at%20your%20fingertips!%20%F0%9F%93%B1%F0%9F%92%8E&amp;font=Rokkitt&amp;forks=1&amp;issues=1&amp;language=1&amp;name=1&amp;owner=1&amp;pattern=Floating%20Cogs&amp;pulls=1&amp;stargazers=1&amp;theme=Dark" alt="project-image"></p>
 
-## Get started
+<p id="description">This mobile application built using React Native and Expo offers users the ability to virtually try on jewelry items such as necklaces and earrings. Leveraging advanced camera features and face-detection technology the app accurately adjusts and positions virtual jewelry on the user’s face and neck in real-time. The app delivers a seamless experience with Skia-based rendering for precise placement and smooth performance making it an innovative solution for users to visualize how jewelry pieces will look before making a purchase.</p>
 
-1. Install dependencies
+  
+  
+<h2>🧐 Features</h2>
 
-   ```bash
-   npm install
-   ```
+Here're some of the project's best features:
 
-2. Start the app
+*   Here are some features you can highlight for your virtual try-on app:
+*   Real-Time Virtual Try-On – Instantly see how necklaces and earrings look on you using your mobile camera 📸💍.
+*   Accurate Face Detection – Smart technology ensures perfect jewelry placement around your neck and ears 🎯💎.
+*   Customizable Jewelry Collection – Browse and select from a wide range of virtual jewelry styles and designs 🛍️✨.
+*   Seamless User Experience – Smooth and responsive performance built with React Native and Expo for flawless virtual try-ons 🚀📱.
+*   Save & Share – Capture your virtual look and share it with friends or on social media easily 📸👗.
+*   Lightweight & Fast – Designed for quick loading and an effortless try-on process optimized for mobile users ⚡📲.
 
-   ```bash
-    npx expo start
-   ```
+<h2>🛠️ Installation Steps:</h2>
 
-In the output, you'll find options to open the app in a
+<p>1. Clone the Repository</p>
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+git clone https://github.com/ShagunDubey1/Virtual-try-on.git
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+<p>2. Navigate to the project directory:</p>
 
-## Learn more
+```
+cd virtual-trial
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+<p>3. Install Dependencies:</p>
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+npm install
+```
 
-## Join the community
+<p>4. Start the App</p>
 
-Join our community of developers creating universal apps.
+```
+npx expo start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+<p>5. Run on Emulator or Device:</p>
+
+  
+  
+<h2>💻 Built with</h2>
+
+Technologies used in the project:
+
+*   React Native
+*   Expo
+*   Skia
+*   React Native Vision Camera
+*   react-native-vision-camera-face-detector
+*   TypeScript
+*   Expo Asset Management
+
+<h2>🛡️ License:</h2>
+
+This project is licensed under the MIT License.
+
+<h2>💖Like my work?</h2>
+
+Special thanks to luicfrr for the amazing react-native-vision-camera-face-detector library. This library played a crucial role in implementing the face detection feature for the virtual try-on experience in our app enabling precise and accurate jewelry placement in real-time.<p>https://github.com/luicfrr/react-native-vision-camera-face-detector</p>
