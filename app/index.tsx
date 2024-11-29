@@ -27,8 +27,6 @@ import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import { useIsFocused } from '@react-navigation/native';
 import { Redirect, router } from 'expo-router';
-import * as Sharing from 'expo-sharing';
-import { captureRef } from 'react-native-view-shot';
 
 const HomeScreen = () => {
   return (
@@ -43,8 +41,6 @@ function FaceDetection(): JSX.Element {
   const isFocused = useIsFocused();
   const { hasPermission } = useCameraPermission();
   const [cameraMounted, setCameraMounted] = useState<boolean>(false);
-
-  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
 
   const [selectedNecklace, setSelectedNecklace] = useState<any>(
     require("../assets/images/neck2.png")
@@ -108,9 +104,6 @@ function FaceDetection(): JSX.Element {
   const cameraDevice = useCameraDevice("front");
   const camera = useRef<VisionCamera>(null);
 
-  // Ref for capturing the entire view
-  const viewRef = useRef<View>(null);
-
   const handleFacesDetected = (faces: Face[]) => {
     if (faces.length > 0) {
       const face = faces[0];
@@ -139,139 +132,9 @@ function FaceDetection(): JSX.Element {
     setSelectedNecklace(url);
   };
 
-  const capturePhoto = async () => {
-  try {
-    if (camera.current && viewRef.current) {
-      // Capture the camera photo
-      const photo = await camera.current.takePhoto({
-        flash: 'off',
-      });
-
-      // Capture the view with the necklace overlay
-      const capturedViewUri = await captureRef(viewRef, {
-        format: 'jpg',
-        quality: 1.0,
-      });
-
-      // Combine the camera photo and the necklace overlay
-      const combinedImage = await combineImages(photo.path, capturedViewUri);
-
-      // Save or set the combined image
-      setCapturedPhoto(combinedImage);
-    }
-  } catch (error) {
-    console.error("Failed to capture photo:", error);
-  }
-};
-
-// Combine images logic
-const combineImages = async (photoPath, overlayUri) => {
-  try {
-    // Read the files using expo-file-system
-    const photoData = await FileSystem.readAsStringAsync(photoPath, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    const overlayData = await FileSystem.readAsStringAsync(overlayUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
-    // Convert base64 strings into Skia data using Skia.Data.MakeFromBase64
-    const photoSkData = Skia.Data.fromBase64(photoData);
-    const overlaySkData = Skia.Data.fromBase64(overlayData);
-
-    // Convert SkData to Skia images
-    const photoImage = Skia.Image.MakeImageFromEncoded(photoSkData);
-    const overlayImage = Skia.Image.MakeImageFromEncoded(overlaySkData);
-
-    // Return the final combined image as JSX
-    return (
-      <Canvas style={{ width: photoImage?.width(), height: photoImage?.height() }}>
-        {/* Draw the camera photo */}
-        <SkiaImage image={photoImage} x={0} y={0} width={4}  height={4}/>
-        
-        {/* Overlay the necklace on top */}
-        <SkiaImage image={overlayImage} x={0} y={0} />
-      </Canvas>
-    );
-  } catch (error) {
-    console.error('Error combining images:', error);
-  }
-};
-
-// Utility to save canvas to an image file (for example using react-native-view-shot)
-const canvasToUri = async (canvas) => {
-  try {
-    const uri = await captureRef(canvas, {
-      format: 'jpg',
-      quality: 1.0,
-    });
-    return uri;
-  } catch (error) {
-    console.error('Error capturing canvas:', error);
-  }
-};
-
-
-   // Share photo function
-  const sharePhoto = async () => {
-    if (capturedPhoto) {
-      try {
-        // Check if sharing is available
-        const isAvailable = await Sharing.isAvailableAsync();
-        
-        if (isAvailable) {
-          await Sharing.shareAsync(capturedPhoto, {
-            dialogTitle: 'Share your virtual jewelry try-on',
-            mimeType: 'image/jpeg'
-          });
-        } else {
-          console.log('Sharing is not available');
-        }
-      } catch (error) {
-        console.error("Failed to share photo:", error);
-      }
-    }
-  };
-
-  // Reset captured photo
-  const resetCapture = () => {
-    setCapturedPhoto(null);
-  };
-
   if (!hasPermission) return <Redirect href={"/permissions"} />;
 
-    // Render captured photo if available
-  if (capturedPhoto) {
-    return (
-      <View style={styles.container}>
-        <Image 
-          source={{ uri: `file://${capturedPhoto}` }} 
-          style={styles.capturedImage} 
-        />
-        <View style={styles.captureControls}>
-          <TouchableOpacity 
-            style={styles.controlButton} 
-            onPress={sharePhoto}
-          >
-            <Text style={styles.buttonText}>Share Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.controlButton} 
-            onPress={resetCapture}
-          >
-            <Text style={styles.buttonText}>Retake</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
   return (
-    <View 
-      ref={viewRef} 
-      collapsable={false} 
-      style={styles.container}
-    >
     <View style={styles.container}>
       <Text style={styles.heading}>
         Face a light source, align your face, and tuck your hair behind your
@@ -290,17 +153,17 @@ const canvasToUri = async (canvas) => {
             faceDetectionCallback={handleFacesDetected}
             faceDetectionOptions={faceDetectionOptions}
           />
-          <Canvas style={styles.canvas}>
-            {skiaImage && cameraMounted && (
-              <SkiaImage
-                image={skiaImage}
-                x={necklacePosition.x}
-                y={necklacePosition.y}
-                width={necklaceSize.width}
-                height={necklaceSize.height}
-              />
-            )}
-          </Canvas>
+            <Canvas style={styles.canvas}>
+              {skiaImage && cameraMounted && (
+                <SkiaImage
+                  image={skiaImage}
+                  x={necklacePosition.x}
+                  y={necklacePosition.y}
+                  width={necklaceSize.width}
+                  height={necklaceSize.height}
+                />
+              )}
+            </Canvas>
         </>
       ) : (
         <Text>No camera device or permission</Text>
@@ -374,17 +237,7 @@ const canvasToUri = async (canvas) => {
             </Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-            style={styles.captureBtn}
-            onPress={capturePhoto}
-          >
-            <Text style={{ color: "white", fontSize: 14, fontWeight: "700" }}>
-              Capture Photo
-            </Text>
-          </TouchableOpacity>
       </View>
-    </View>
-
     </View>
   );
 }

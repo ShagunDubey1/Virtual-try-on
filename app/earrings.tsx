@@ -107,11 +107,11 @@ function FaceDetection(): JSX.Element {
 
       // Estimate left ear position
       const leftEarX = faceX - 90; 
-      const leftEarY = faceY + faceHeight / 2 + 20;
+      const leftEarY = faceY + faceHeight / 2 + 5;
 
       // Estimate right ear position
-      const rightEarX =  faceWidth + leftEarX;
-      const rightEarY = faceY + faceHeight / 2 + 20;
+      const rightEarX =  faceWidth - 10;
+      const rightEarY = faceY + faceHeight / 2 + 5;
 
       setEarringPositions([
         { x: leftEarX, y: leftEarY },
