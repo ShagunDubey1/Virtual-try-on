@@ -22,10 +22,9 @@ Here're some of the project's best features:
 
 Check out the demo of our **Virtual Necklace Try-On App** on YouTube:
 
-[![Watch the video](https://img.youtube.com/vi/z2krUkiby_8/0.jpg)](https://youtube.com/shorts/z2krUkiby_8?feature=share)
+[![Watch the video](https://img.youtube.com/vi/2vkpoPTZp4I/0.jpg)](https://youtube.com/shorts/2vkpoPTZp4I?feature=share)
 
-Click the thumbnail or [watch it here](https://youtube.com/shorts/z2krUkiby_8?feature=share).
-
+Click the thumbnail or [watch it here](https://youtube.com/shorts/2vkpoPTZp4I?feature=share).
 
 <h2>🛠️ Installation Steps:</h2>
 
