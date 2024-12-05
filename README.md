@@ -18,6 +18,15 @@ Here're some of the project's best features:
 *   Save & Share – Capture your virtual look and share it with friends or on social media easily 📸👗.
 *   Lightweight & Fast – Designed for quick loading and an effortless try-on process optimized for mobile users ⚡📲.
 
+ ## Necklace Try-On Demo
+
+Check out the demo of our **Virtual Necklace Try-On App** on YouTube:
+
+[![Watch the video](https://img.youtube.com/vi/z2krUkiby_8/0.jpg)](https://youtube.com/shorts/z2krUkiby_8?feature=share)
+
+Click the thumbnail or [watch it here](https://youtube.com/shorts/z2krUkiby_8?feature=share).
+
+
 <h2>🛠️ Installation Steps:</h2>
 
 <p>1. Clone the Repository</p>
